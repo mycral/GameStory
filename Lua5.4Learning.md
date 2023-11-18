@@ -21,13 +21,14 @@ Because Lua has no knowledge about C code, it never collects objects accessible 
 *The garbage collector (GC) in Lua can work in two modes: incremental and generational.*  
 垃圾收集包括两个模式： 增量和分代
 
-The default GC mode with the default parameters are adequate for most uses. However, programs that waste a large proportion 
+*The default GC mode with the default parameters are adequate for most uses. However, programs that waste a large proportion 
 of their time allocating and freeing memory can benefit from other settings. Keep in mind that the GC behavior is non-portable 
-both across platforms and across different Lua releases; therefore, optimal settings are also non-portable.
-
-You can change the GC mode and parameters by calling lua_gc in C or collectgarbage in Lua. You can also use these functions
-to control the collector directly (e.g., to stop and restart it).
-
+both across platforms and across different Lua releases; therefore, optimal settings are also non-portable.*  
+默认的GC模式已经适用大部分使用lua的情况。 但是，程序如果浪费大量的时间去申请和释放内存，可以通过其他设置来改善。 要时刻谨记，
+垃圾收集的行为在不同的平台和不同的Lua版本之间是不可移植的；因此，最优的设置也是不可移植的。  
+*You can change the GC mode and parameters by calling lua_gc in C or collectgarbage in Lua. You can also use these functions
+to control the collector directly (e.g., to stop and restart it).*  
+你可以通过在C中调用lua_gc或在Lua中调用collectgarbage来改变GC模式和参数。你也可以直接使用这些函数来控制垃圾收集器（比如，停止和重启它）。  
 2.5.1 – Incremental Garbage Collection
 In incremental mode, each GC cycle performs a mark-and-sweep collection in small steps interleaved with the program's execution. 
 In this mode, the collector uses three numbers to control its garbage-collection cycles: the garbage-collector pause, the garbage-collector step multiplier,
