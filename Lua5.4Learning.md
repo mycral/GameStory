@@ -94,20 +94,24 @@ management such as closing files, network or database connections, or freeing yo
 *Any error while running a finalizer generates a warning; the error is not propagated.*  
 **在终结器里面发生的任何错误都会生成异常警告，这些错误不会传递影响后面的数据处理。（可以任务这个__gc调用类似一个pcall或者trycatch）**  
 
-2.5.4 – Weak Tables
-A weak table is a table whose elements are weak references. A weak reference is ignored by the garbage collector. In other words, if the only references to an object are weak references, then the garbage collector will collect that object.
+## 2.5.4 – Weak Tables
+A weak table is a table whose elements are weak references. A weak reference is ignored by the garbage collector. In other words, if the only references to an object are weak references, then the garbage collector will collect that object.  
+弱引用表就是元素都是弱引用的表。 弱引用会被垃圾收集器忽略。 也就是说，如果对一个对象的引用是弱引用，那么垃圾回收器会清理这个对象。  
+A weak table can have weak keys, weak values, or both. A table with weak values allows the collection of its values, but prevents the collection of its keys. A table with both weak keys and weak values allows the collection of both keys and values. In any case, if either the key or the value is collected, the whole pair is removed from the table. The weakness of a table is controlled by the __mode field of its metatable. This metavalue, if present, must be one of the following strings: "k", for a table with weak keys; "v", for a table with weak values; or "kv", for a table with both weak keys and values.  
+弱引用表可以是key弱引用 或者是 value弱引用，或者二者都是。 value弱引用的表运行垃圾收集器收集他的值，但是会限制收集他的key。 二者都是弱引用的表运行key和value都被收集。 在任何时候，如果key或者value有一个被垃圾收集了，那么这个键值对就被从表里面移除了。弱引用表的弱引用是被metatable中的__mode 字段控制的。 这个元值如果出现的话，必须是以下字符串， 设置"k"那么说明key是弱引用， 设置"v"那么说明value是弱引用。 "kv"就不用解释了。  
 
-A weak table can have weak keys, weak values, or both. A table with weak values allows the collection of its values, but prevents the collection of its keys. A table with both weak keys and weak values allows the collection of both keys and values. In any case, if either the key or the value is collected, the whole pair is removed from the table. The weakness of a table is controlled by the __mode field of its metatable. This metavalue, if present, must be one of the following strings: "k", for a table with weak keys; "v", for a table with weak values; or "kv", for a table with both weak keys and values.
+A table with weak keys and strong values is also called an ephemeron table. In an ephemeron table, a value is considered reachable only if its key is reachable. In particular, if the only reference to a key comes through its value, the pair is removed.  
+只有key是弱引用的表叫做 短暂表 ，在短暂表中，一个值是否可以达要根据key是否可以达。在特殊情况下，如果对key的引用来自他的value，那么这个键值对会被移除。 （也就是说 key不被其他对象引用，只有跟这个value作为一个键值对存在这个表中）  
 
-A table with weak keys and strong values is also called an ephemeron table. In an ephemeron table, a value is considered reachable only if its key is reachable. In particular, if the only reference to a key comes through its value, the pair is removed.
-
-Any change in the weakness of a table may take effect only at the next collect cycle. In particular, if you change the weakness to a stronger mode, Lua may still collect some items from that table before the change takes effect.
-
+Any change in the weakness of a table may take effect only at the next collect cycle. In particular, if you change the weakness to a stronger mode, Lua may still collect some items from that table before the change takes effect.  
+对一个表弱引用的修改，会在下个垃圾收集循环起作用。特别是，如果设置弱引用成强引用，lua仍然可能在这个修改 起作用之前 收集掉这个表。  
 Only objects that have an explicit construction are removed from weak tables. Values, such as numbers and light C functions, are not subject to garbage collection, and therefore are not removed from weak tables (unless their associated values are collected). Although strings are subject to garbage collection, they do not have an explicit construction and their equality is by value; they behave more like values than like objects. Therefore, they are not removed from weak tables.
 
-Resurrected objects (that is, objects being finalized and objects accessible only through objects being finalized) have a special behavior in weak tables. They are removed from weak values before running their finalizers, but are removed from weak keys only in the next collection after running their finalizers, when such objects are actually freed. This behavior allows the finalizer to access properties associated with the object through weak tables.
-
+Resurrected objects (that is, objects being finalized and objects accessible only through objects being finalized) have a special behavior in weak tables. They are removed from weak values before running their finalizers, but are removed from weak keys only in the next collection after running their finalizers, when such objects are actually freed. This behavior allows the finalizer to access properties associated with the object through weak tables.  
+复活对象（也就是被终结的对象和通过这个对象能访问到的其他对象） 在若表中有一个特殊的行为。  
+他们在执行终结器“之前”被从弱值中移除， 但是key弱引用的对象会在终结器执行之后移除，  在这些对象被实际释放的时候。  这个行为允许终结器访问一个被弱引用表引用的对象。 （这里要看仔细，也很重要）  
 If a weak table is among the resurrected objects in a collection cycle, it may not be properly cleared until the next cycle.
+如果一个弱引用的表在一个收集循环中复活了，那么应该在下次收集之前不会被清理掉。  
 
 # collectgarbage ([opt [, arg]])
 This function is a generic interface to the garbage collector. It performs different functions according to its first argument, opt:  
