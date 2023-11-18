@@ -111,7 +111,7 @@ If a weak table is among the resurrected objects in a collection cycle, it may n
 
 # collectgarbage ([opt [, arg]])
 This function is a generic interface to the garbage collector. It performs different functions according to its first argument, opt:  
-
+这个方法是垃圾收集器的通用接口。 跟据传入的参数执行不同的功能。 有以下选项：  
 "collect": Performs a full garbage-collection cycle. This is the default option.  
 执行一次完整的内存回收，这个是默认选项。  
 "stop": Stops automatic execution of the garbage collector. The collector will run only when explicitly invoked, until a call to restart it.  
