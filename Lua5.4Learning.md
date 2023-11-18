@@ -45,24 +45,31 @@ A value of 200 means that the collector waits for the total memory in use to dou
 
 The garbage-collector step multiplier controls the speed of the collector relative to memory allocation, that is, how many elements it marks or sweeps for 
 each kilobyte of memory allocated. Larger values make the collector more aggressive but also increase the size of each incremental step. You should not use values less than 100, 
-because they make the collector too slow and can result in the collector never finishing a cycle. The default value is 100; the maximum value is 1000.
+because they make the collector too slow and can result in the collector never finishing a cycle. The default value is 100; the maximum value is 1000.  
+垃圾收集器步进乘数控制收集器相对于内存分配的速度，即它每分配一千字节的内存就标记或清扫多少个元素。较大的值会使收集器更积极，但也会增加每个增量步骤的大小。  
+你不应该使用小于100的值，因为它们会使收集器过慢，可能导致收集器永远无法完成一个周期。默认值是100；最大值是1000。
 
 The garbage-collector step size controls the size of each incremental step, specifically how many bytes the interpreter allocates before performing a step. 
 This parameter is logarithmic: A value of n means the interpreter will allocate 2n bytes between steps and perform equivalent work during the step.
-A large value (e.g., 60) makes the collector a stop-the-world (non-incremental) collector. The default value is 13, which means steps of approximately 8 Kbytes.
-
+A large value (e.g., 60) makes the collector a stop-the-world (non-incremental) collector. The default value is 13, which means steps of approximately 8 Kbytes.  
+垃圾收集器步进大小控制每个增量步骤的大小，具体而言，就是解释器在执行一个步骤之前分配多少字节。这个参数是对数的：n的值意味着解释器在步骤之间会分配2^n字节，并在步骤期间执行等量的工作。
+较大的值（例如，60）会使收集器成为一个停止世界（非增量）的收集器。默认值是13，这意味着步骤大约是8 K字节。
 2.5.2 – Generational Garbage Collection
 In generational mode, the collector does frequent minor collections, which traverses only objects recently created. If after a minor collection the use of memory is still above a limit, 
-the collector does a stop-the-world major collection, which traverses all objects. The generational mode uses two parameters: the minor multiplier and the the major multiplier.
-
+the collector does a stop-the-world major collection, which traverses all objects. The generational mode uses two parameters: the minor multiplier and the the major multiplier.  
+在代际模式下，收集器会频繁进行小型收集，这只涉及到最近创建的对象。
+如果在一次小型收集后，内存使用量仍然超过一个限制，收集器就会进行一次停止世界的大型收集，这涉及到所有的对象。
+代际模式使用两个参数：小型乘数和大型乘数。  
 The minor multiplier controls the frequency of minor collections. For a minor multiplier x, a new minor collection will be done when memory grows x% larger than the memory 
 in use after the previous major collection. For instance, for a multiplier of 20, the collector will do a minor collection when the use of memory gets 20% larger than 
-the use after the previous major collection. The default value is 20; the maximum value is 200.
-
+the use after the previous major collection. The default value is 20; the maximum value is 200.  
+小型乘数控制小型收集的频率。对于小型乘数x，当内存增长到上次大型收集后的内存使用量的x%时，将进行新的小型收集。
+例如，对于乘数为20，当内存使用量增长到上次大型收集后的内存使用量的20%时，收集器将进行小型收集。默认值是20；最大值是200。
 The major multiplier controls the frequency of major collections. For a major multiplier x, a new major collection will be done when memory grows x% larger than 
 the memory in use after the previous major collection. For instance, for a multiplier of 100, the collector will do a major collection when the use of memory gets larger than 
-twice the use after the previous collection. The default value is 100; the maximum value is 1000.
-
+twice the use after the previous collection. The default value is 100; the maximum value is 1000.  
+大型乘数控制大型收集的频率。对于大型乘数x，当内存增长到上次大型收集后的内存使用量的x%时，将进行新的大型收集。  
+例如，对于乘数为100，当内存使用量大于上次收集后的内存使用量的两倍时，收集器将进行大型收集。默认值是100；最大值是1000。
 
 ## 2.5.3 – Garbage-Collection Metamethods
 ## 垃圾收集Meta方法
