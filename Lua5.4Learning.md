@@ -37,9 +37,11 @@ and the garbage-collector step size.*
 
 在这个模式下，收集器使用3个数字去控制垃圾收集循环： 垃圾收集器暂停，垃圾收集器step倍增 和 垃圾收集器step大小。
 
-The garbage-collector pause controls how long the collector waits before starting a new cycle. The collector starts a new cycle when the use of memory hits n% of 
+*The garbage-collector pause controls how long the collector waits before starting a new cycle. The collector starts a new cycle when the use of memory hits n% of 
 the use after the previous collection. Larger values make the collector less aggressive. Values equal to or less than 100 mean the collector will not wait to start a new cycle. 
-A value of 200 means that the collector waits for the total memory in use to double before starting a new cycle. The default value is 200; the maximum value is 1000.
+A value of 200 means that the collector waits for the total memory in use to double before starting a new cycle. The default value is 200; the maximum value is 1000.*  
+“垃圾收集暂停” 控制要等多久才开始新的垃圾收集循环。 收集器在内存使用触碰到上次收集之后的n%的时候，会开始新的循环。 越大的值会让收集器越不激进。 值等于或者小于100意味着收集器不会等待就开始一个新的收集循环。
+值为200意味着收集器会等待总内存使用量翻倍后再开始新的周期。默认值是200，最大值是1000。
 
 The garbage-collector step multiplier controls the speed of the collector relative to memory allocation, that is, how many elements it marks or sweeps for 
 each kilobyte of memory allocated. Larger values make the collector more aggressive but also increase the size of each incremental step. You should not use values less than 100, 
