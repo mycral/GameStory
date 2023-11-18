@@ -119,20 +119,20 @@ This function is a generic interface to the garbage collector. It performs diffe
 "restart": Restarts automatic execution of the garbage collector.  
 重启自动执行垃圾收集的功能。  
 "count": Returns the total memory in use by Lua in Kbytes. The value has a fractional part, so that it multiplied by 1024 gives the exact number of bytes in use by Lua.  
-返回lua使用的总内存，但挖是kbytes。 这个值有个小数部分，因此必须乘以1026才能获取以bytes为单位的精确值。
+返回lua使用的总内存，但挖是kbytes。 这个值有个小数部分，因此必须乘以1026才能获取以bytes为单位的精确值。  
 "step": Performs a garbage-collection step. The step "size" is controlled by arg. With a zero value, the collector will perform one basic (indivisible) step.  
        For non-zero values, the collector will perform as if that amount of memory (in Kbytes) had been allocated by Lua. Returns true if the step finished a collection cycle.  
 
 "isrunning": Returns a boolean that tells whether the collector is running (i.e., not stopped).  
-获取垃圾收集器是否工作，意思是是否自动回收。
+获取垃圾收集器是否工作，意思是是否自动回收。  
 "incremental": Change the collector mode to incremental. This option can be followed by three numbers: the garbage-collector pause, the step multiplier,  
                and the step size (see §2.5.1). A zero means to not change that value.  
-切换垃圾收集器模式成增量模式，这个选项后面可以跟三个数字，分别是 暂停 倍增 和 步进大小。 0代表不改变对应的值。
+切换垃圾收集器模式成增量模式，这个选项后面可以跟三个数字，分别是 暂停 倍增 和 步进大小。 0代表不改变对应的值。  
 "generational": Change the collector mode to generational. This option can be followed by two numbers: the garbage-collector minor multiplier and the major multiplier (see §2.5.2).  
                  A zero means to not change that value.
-切换垃圾收集器到分代模式。 这个选项后面跟两个数字： 年轻代倍率值和主代倍率值。  0代表不改变对应的值。
+切换垃圾收集器到分代模式。 这个选项后面跟两个数字： 年轻代倍率值和主代倍率值。  0代表不改变对应的值。  
 
 See §2.5 for more details about garbage collection and some of these options.  
 
 This function should not be called by a finalizer.  
-终结器（__gc）不能调用这个方法。
+终结器（__gc）不能调用这个方法。  
