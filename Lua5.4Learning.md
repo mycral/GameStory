@@ -129,7 +129,7 @@ This function is a generic interface to the garbage collector. It performs diffe
                and the step size (see §2.5.1). A zero means to not change that value.  
 切换垃圾收集器模式成增量模式，这个选项后面可以跟三个数字，分别是 暂停 倍增 和 步进大小。 0代表不改变对应的值。  
 "generational": Change the collector mode to generational. This option can be followed by two numbers: the garbage-collector minor multiplier and the major multiplier (see §2.5.2).  
-                 A zero means to not change that value.
+                 A zero means to not change that value.  
 切换垃圾收集器到分代模式。 这个选项后面跟两个数字： 年轻代倍率值和主代倍率值。  0代表不改变对应的值。  
 
 See §2.5 for more details about garbage collection and some of these options.  
