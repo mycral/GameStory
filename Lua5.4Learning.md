@@ -30,9 +30,12 @@ both across platforms and across different Lua releases; therefore, optimal sett
 to control the collector directly (e.g., to stop and restart it).*  
 你可以通过在C中调用lua_gc或在Lua中调用collectgarbage来改变GC模式和参数。你也可以直接使用这些函数来控制垃圾收集器（比如，停止和重启它）。  
 2.5.1 – Incremental Garbage Collection
-In incremental mode, each GC cycle performs a mark-and-sweep collection in small steps interleaved with the program's execution. 
+*In incremental mode, each GC cycle performs a mark-and-sweep collection in small steps interleaved with the program's execution. 
 In this mode, the collector uses three numbers to control its garbage-collection cycles: the garbage-collector pause, the garbage-collector step multiplier,
-and the garbage-collector step size.
+and the garbage-collector step size.*  
+在增量模式下，每次gc循环都是一个标记清理收集的过程，分为很多小step步骤插入在程序的执行中。
+
+在这个模式下，收集器使用3个数字去控制垃圾收集循环： 垃圾收集器暂停，垃圾收集器step倍增 和 垃圾收集器step大小。
 
 The garbage-collector pause controls how long the collector waits before starting a new cycle. The collector starts a new cycle when the use of memory hits n% of 
 the use after the previous collection. Larger values make the collector less aggressive. Values equal to or less than 100 mean the collector will not wait to start a new cycle. 
