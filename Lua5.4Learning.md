@@ -93,3 +93,33 @@ management such as closing files, network or database connections, or freeing yo
 **终结器方法不能延迟（coroutine)或者执行垃圾回收，因为他们执行的时刻是不确定的，使用终结器去释放仅仅与其关联的资源，是最好的方式。（不建议各种魔法使用）**  
 *Any error while running a finalizer generates a warning; the error is not propagated.*  
 **在终结器里面发生的任何错误都会生成异常警告，这些错误不会传递影响后面的数据处理。（可以任务这个__gc调用类似一个pcall或者trycatch）**  
+
+2.5.4 – Weak Tables
+A weak table is a table whose elements are weak references. A weak reference is ignored by the garbage collector. In other words, if the only references to an object are weak references, then the garbage collector will collect that object.
+
+A weak table can have weak keys, weak values, or both. A table with weak values allows the collection of its values, but prevents the collection of its keys. A table with both weak keys and weak values allows the collection of both keys and values. In any case, if either the key or the value is collected, the whole pair is removed from the table. The weakness of a table is controlled by the __mode field of its metatable. This metavalue, if present, must be one of the following strings: "k", for a table with weak keys; "v", for a table with weak values; or "kv", for a table with both weak keys and values.
+
+A table with weak keys and strong values is also called an ephemeron table. In an ephemeron table, a value is considered reachable only if its key is reachable. In particular, if the only reference to a key comes through its value, the pair is removed.
+
+Any change in the weakness of a table may take effect only at the next collect cycle. In particular, if you change the weakness to a stronger mode, Lua may still collect some items from that table before the change takes effect.
+
+Only objects that have an explicit construction are removed from weak tables. Values, such as numbers and light C functions, are not subject to garbage collection, and therefore are not removed from weak tables (unless their associated values are collected). Although strings are subject to garbage collection, they do not have an explicit construction and their equality is by value; they behave more like values than like objects. Therefore, they are not removed from weak tables.
+
+Resurrected objects (that is, objects being finalized and objects accessible only through objects being finalized) have a special behavior in weak tables. They are removed from weak values before running their finalizers, but are removed from weak keys only in the next collection after running their finalizers, when such objects are actually freed. This behavior allows the finalizer to access properties associated with the object through weak tables.
+
+If a weak table is among the resurrected objects in a collection cycle, it may not be properly cleared until the next cycle.
+
+# collectgarbage ([opt [, arg]])
+This function is a generic interface to the garbage collector. It performs different functions according to its first argument, opt:
+
+"collect": Performs a full garbage-collection cycle. This is the default option.
+"stop": Stops automatic execution of the garbage collector. The collector will run only when explicitly invoked, until a call to restart it.
+"restart": Restarts automatic execution of the garbage collector.
+"count": Returns the total memory in use by Lua in Kbytes. The value has a fractional part, so that it multiplied by 1024 gives the exact number of bytes in use by Lua.
+"step": Performs a garbage-collection step. The step "size" is controlled by arg. With a zero value, the collector will perform one basic (indivisible) step. For non-zero values, the collector will perform as if that amount of memory (in Kbytes) had been allocated by Lua. Returns true if the step finished a collection cycle.
+"isrunning": Returns a boolean that tells whether the collector is running (i.e., not stopped).
+"incremental": Change the collector mode to incremental. This option can be followed by three numbers: the garbage-collector pause, the step multiplier, and the step size (see §2.5.1). A zero means to not change that value.
+"generational": Change the collector mode to generational. This option can be followed by two numbers: the garbage-collector minor multiplier and the major multiplier (see §2.5.2). A zero means to not change that value.
+See §2.5 for more details about garbage collection and some of these options.
+
+This function should not be called by a finalizer.
