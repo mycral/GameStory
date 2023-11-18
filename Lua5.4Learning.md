@@ -106,12 +106,15 @@ A table with weak keys and strong values is also called an ephemeron table. In a
 Any change in the weakness of a table may take effect only at the next collect cycle. In particular, if you change the weakness to a stronger mode, Lua may still collect some items from that table before the change takes effect.  
 对一个表弱引用的修改，会在下个垃圾收集循环起作用。特别是，如果设置弱引用成强引用，lua仍然可能在这个修改 起作用之前 收集掉这个表。  
 Only objects that have an explicit construction are removed from weak tables. Values, such as numbers and light C functions, are not subject to garbage collection, and therefore are not removed from weak tables (unless their associated values are collected). Although strings are subject to garbage collection, they do not have an explicit construction and their equality is by value; they behave more like values than like objects. Therefore, they are not removed from weak tables.
-**只有明确构建的的对象才会被从若表中移除，值，比如数字或者轻量级c函数，都不是垃圾收集的对象，因此不会冲若表中移除，除非他们关联的值被收集了（key 或者是 value有一个被回收）。 虽然字符串也是被垃圾收集的对象，但是它没有明确的构建然后他们的等价是值，他们的对象更像值。 因此不会冲弱表中移除。（不是很理解）**  
+**只有明确构建的的对象才会被从若表中移除，值，比如数字或者轻量级c函数，都不是垃圾收集的对象，因此不会冲若表中移除，除非他们关联的值被收集了（key 或者是 value有一个被回收）。 虽然字符串也是被垃圾收集的对象，但是它没有明确的构建然后他们的等价是值，他们的对象更像值。 因此不会冲弱表中移除。（不是很理解下面有字符串的详细一点的解释）**  
 Resurrected objects (that is, objects being finalized and objects accessible only through objects being finalized) have a special behavior in weak tables. They are removed from weak values before running their finalizers, but are removed from weak keys only in the next collection after running their finalizers, when such objects are actually freed. This behavior allows the finalizer to access properties associated with the object through weak tables.  
 **复活对象（也就是被终结的对象和通过这个对象能访问到的其他对象） 在若表中有一个特殊的行为。  
 他们在执行终结器“之前”被从弱值中移除， 但是key弱引用的对象会在终结器执行之后移除，  在这些对象被实际释放的时候。  这个行为允许终结器访问一个被弱引用表引用的对象。 （这里要看仔细，也很重要）**  
 If a weak table is among the resurrected objects in a collection cycle, it may not be properly cleared until the next cycle.
 如果一个弱引用的表在一个收集循环中复活了，那么应该在下次收集之前不会被清理掉。  
+
+Note:
+Strings present a subtlety here: Although strings are collectible, from an implementation point of view, they are not like other collectible objects. Other objects, such as tables and functions, are created explicitly. For instance, whenever Lua evaluates {}, it creates a new table. Whenever it evaluates function () ... end, it creates a new function (a closure, actually). However, does Lua create a new string when it evaluates "a".."b"? What if there is already a string "ab" in the system? Does Lua create a new one? Can the compiler create that string before running the program? It does not matter: These are implementation details. Thus, from the programmer's point of view, strings are values, not objects. Therefore, like a number or a boolean, a string is not removed from weak tables (unless its associated value is collected).   
 
 # collectgarbage ([opt [, arg]])
 This function is a generic interface to the garbage collector. It performs different functions according to its first argument, opt:  
