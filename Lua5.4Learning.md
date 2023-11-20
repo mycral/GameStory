@@ -14,6 +14,13 @@ When Lua loads a chunk, the default value for its _ENV variable is the global en
 当lua加载一个chunk的时候，_ENV就是全局环境表，默认的，lua里面的自由名字引用的都是全局环境中的变量，因此，他们被叫做全局变量。 此外，所有的标准库和部分函数都是在全局环境加载的。 你可以使用不同的环境变量 用load或者loadfile去加载一个chunk。  
 在C代码中，你可以去加载一个chunk，然后修改它的upvalue中的第一个值。（这个第一个应该默认就是环境变量表）。  
 
+```lua
+local luastr = "printx(x)"
+local env = {x = "abef",printx=print}
+local xchunk = load(luastr,"hchunk","bt",env)
+print(xchunk)
+xchunk()
+```
 
 # 3.4.7 – The Length Operator
 # 长度运算符
