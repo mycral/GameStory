@@ -1,4 +1,5 @@
 # 2.2 – Environments and the Global Environment
+#  环境和全局环境（表）
 As we will discuss further in §3.2 and §3.3.3, any reference to a free name (that is, a name not bound to any declaration) var is syntactically translated to _ENV.var. Moreover, every chunk is compiled in the scope of an external local variable named _ENV (see §3.3.2), so _ENV itself is never a free name in a chunk.  
 我们将会在后面讨论。 任何一个自由名字的引用（也就说，这个名字没有绑定到任何声明，也就说局部没有声明这个变量）那么这个变量在语法上就会翻译到_ENV.var上面（也就是说会去_ENV上面去找这个变量）。 此外，每一个chunk被编译进入一个额外局部变量_ENV,因此_ENV本身在chunk里面不是随便定义的。  
 
