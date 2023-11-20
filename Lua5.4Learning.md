@@ -1,4 +1,35 @@
+# 3.4.7 – The Length Operator
+# 长度运算符
+The length operator is denoted by the unary prefix operator #.  
+长度运算符是一个一元前缀#  
+The length of a string is its number of bytes. (That is the usual meaning of string length when each character is one byte.)  
+字符串的长度就是字符串所包含的字节数。（ 当一个字符一个字节的时候，也就是对应的字符串长度了）（当然字符串里面可以包含\0,作为字节流使用）  
+The length operator applied on a table returns a border in that table. A border in a table t is any non-negative integer that satisfies the following condition:  
+长度运算符用在table上面的时候，返回的是table的一个border(边缘）。 一个表的border的意思是一个非负整数并且满足下面几个条件：  
+     (border == 0 or t[border] ~= nil) and  
+     (t[border + 1] == nil or border == math.maxinteger)  
+     
+In words, a border is any positive integer index present in the table that is followed by an absent index, plus two limit cases: zero, when index 1 is absent; and the maximum value for an integer, when that index is present. Note that keys that are not positive integers do not interfere with borders.  
+一句话，boder就是一个有内容的下表需要（ table[border]）然后紧邻一个是空值的下标序号，然后加上两个限制： 如果是0，说明序号1下面也没数据； intger的最大值的时候也有对应的数据。 注意，非正整数下标不影响border。  
+  
+A table with exactly one border is called a sequence. For instance, the table {10, 20, 30, 40, 50} is a sequence, as it has only one border (5). The table {10, 20, 30, nil, 50} has two borders (3 and 5), and therefore it is not a sequence. (The nil at index 4 is called a hole.) The table {nil, 20, 30, nil, nil, 60, nil} has three borders (0, 3, and 6), so it is not a sequence, too. The table {} is a sequence with border 0.  
+有唯一border的table才是一个序列（数组）。 比如，table {10, 20, 30, 40, 50}是个序列，因为只有一个border(5).  table {10, 20, 30, nil, 50} 有两个 border (3 和 5),因此他不是一个序列。(序号4的位置是个nil值，称之为 hole（洞？）.)。
+ table {nil, 20, 30, nil, nil, 60, nil} 有三个 border (0, 3, and 6), 所以也不是一个序列。  table {} 的border是0，是个序列。  
+  
+When t is a sequence, #t returns its only border, which corresponds to the intuitive notion of the length of the sequence. When t is not a sequence, #t can return any of its borders. (The exact one depends on details of the internal representation of the table, which in turn can depend on how the table was populated and the memory addresses of its non-numeric keys.)  
+当t是个序列的时候，它只有一个border，也就是直觉上的序列的长度的概念。如果不是一个序列，那么#t看可能返回任何一个border值。
+（具体哪个边界取决于表的内部表示的细节，这又可能取决于如何填充表以及其非数值键的内存地址。）  
+The computation of the length of a table has a guaranteed worst time of O(log n), where n is the largest integer key in the table.  
+计算表的长度消耗的时间是可以保证的O(log n) ，n是最大的整数 键值。 （这个地方应该是指的序列）  
+A program can modify the behavior of the length operator for any value but strings through the __len metamethod (see §2.4).  
+程序员可以通过修改原表中的__len 方法来修改这个获取长度的行为。（比如自定义计算长度的方法）  
 
+*补充：O(1)：常量时间  
+O(n)：线性时间  
+O(log n)：对数时间  
+O(n^2)：二次方时间  
+O(2^n)：指数时间  
+O(n!)：阶乘时间*  
 
 # 2.5 – Garbage Collection
 # 垃圾收集
