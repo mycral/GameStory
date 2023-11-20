@@ -9,7 +9,19 @@ Despite the existence of this external _ENV variable and the translation of free
 Any table used as the value of _ENV is called an environment.  
 任何作为_ENV存在的表都称之为环境。（环境表）  
 Lua keeps a distinguished environment called the global environment. This value is kept at a special index in the C registry (see §4.3). In Lua, the global variable _G is initialized with this same value. (_G is never used internally, so changing its value will affect only your own code.)  
-lua还保存了另外一个环境表叫做全局环境表。这个表被注册在C注册表上面。在lua里面，全局_G 对应其值。（_G 不是内部使用的，因此改变其值，只会影响你自己的代码）（需要测试）
+lua还保存了另外一个环境表叫做全局环境表。这个表被注册在C注册表上面。在lua里面，全局_G 对应其值。（_G 不是内部使用的，因此改变其值，只会影响你自己的代码，意思是这个东西只给lua程序员使用，不会影响到lua底层机制，只会在用户代码中起作用【感觉没必要写这句话，令人迷惑】）  
+```lua
+local luastr = " for k,v in pairs(_G) do print(k,v) end "
+local luastr2 = " print(_ENV ,_G) "
+local luastr3 = " print(_ENV ,_G) "
+load(luastr2)()
+load(luastr3)()
+
+output:
+table: 0x161e9c0	table: 0x161e9c0
+table: 0x161e9c0	table: 0x161e9c0
+---说明不填env的话_G 和_ENV是同一个。
+```
 When Lua loads a chunk, the default value for its _ENV variable is the global environment (see load). Therefore, by default, free names in Lua code refer to entries in the global environment and, therefore, they are also called global variables. Moreover, all standard libraries are loaded in the global environment and some functions there operate on that environment. You can use load (or loadfile) to load a chunk with a different environment. (In C, you have to load the chunk and then change the value of its first upvalue; see lua_setupvalue.)  
 当lua加载一个chunk的时候，_ENV就是全局环境表，默认的，lua里面的自由名字引用的都是全局环境中的变量，因此，他们被叫做全局变量。 此外，所有的标准库和部分函数都是在全局环境加载的。 你可以使用不同的环境变量 用load或者loadfile去加载一个chunk。  
 在C代码中，你可以去加载一个chunk，然后修改它的upvalue中的第一个值。（这个第一个应该默认就是环境变量表）。  
