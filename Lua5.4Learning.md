@@ -248,15 +248,21 @@ Returns the metatable of the given value or nil if it does not have a metatable.
 debug.getregistry ()
 Returns the registry table (see §4.3).
 
-debug.getupvalue (f, up)
-This function returns the name and the value of the upvalue with index up of the function f. The function returns fail if there is no upvalue with the given index.
+debug.getupvalue (f, up)  
+This function returns the name and the value of the upvalue with index up of the function f. The function returns **fail** if there is no upvalue with the given index.  
+这个函数返回函数f指定位置的upvalue的名字和值。 如果返回失败那么说明对应位置没有upvalue.   
+注意fail就是nil   
+```lua
+/* push the value used to represent failure/error */
+#define luaL_pushfail(L)        lua_pushnil(L)
+```
+(For Lua functions, upvalues are the external local variables that the function uses, and that are consequently included in its closure.)  
+对于lua函数，upvalue就是函数用到的本地变量，因此被包含到闭包里面。  
 
-(For Lua functions, upvalues are the external local variables that the function uses, and that are consequently included in its closure.)
-
-For C functions, this function uses the empty string "" as a name for all upvalues.
-
-Variable name '?' (interrogation mark) represents variables with no known names (variables from chunks saved without debug information).
-
+For C functions, this function uses the empty string "" as a name for all upvalues.  
+对于C函数，upvalue的名字都是“” 空字符串  
+Variable name '?' (interrogation mark) represents variables with no known names (variables from chunks saved without debug information).  
+变量名字是？ 说明不知道变量的名字（没有debug信息的chunk会是这个情况）  
 debug.getuservalue (u, n)
 Returns the n-th user value associated to the userdata u plus a boolean, false if the userdata does not have that value.
 
