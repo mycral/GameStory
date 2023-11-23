@@ -1,0 +1,6 @@
+1. 下载最新版本python3
+2. 在scripts目录执行pip3 install jupyter
+3. 执行jupyter notebook 启动服务器 会自动打开浏览器
+4. 安装ILUA https://pypi.org/project/ilua/  pip install ilua 它提供一个适配lua的框架，转发lua代码运行请求。
+5. 安装lua的运行时，并且改名字成lua.exe 然后放到环境变量path路径中 
+6. 重启jupyter即可
