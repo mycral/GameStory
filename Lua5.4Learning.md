@@ -311,3 +311,92 @@ These unique identifiers allow a program to check whether different closures sha
 
 debug.upvaluejoin (f1, n1, f2, n2)
 Make the n1-th upvalue of the Lua closure f1 refer to the n2-th upvalue of the Lua closure f2.
+
+
+# 6.1 – Basic Functions  
+# 基础函数  
+The basic library provides core functions to Lua. If you do not include this library in your application, you should check carefully whether you need to provide implementations for some of its facilities.  
+
+assert (v [, message])  
+Raises an error if the value of its argument v is false (i.e., nil or false); otherwise, returns all its arguments. In case of error, message is the error object; when absent, it defaults to "assertion failed!"  
+
+collectgarbage ([opt [, arg]])  
+This function is a generic interface to the garbage collector. It performs different functions according to its first argument, opt:
+
+"collect": Performs a full garbage-collection cycle. This is the default option.
+"stop": Stops automatic execution of the garbage collector. The collector will run only when explicitly invoked, until a call to restart it.
+"restart": Restarts automatic execution of the garbage collector.
+"count": Returns the total memory in use by Lua in Kbytes. The value has a fractional part, so that it multiplied by 1024 gives the exact number of bytes in use by Lua.
+"step": Performs a garbage-collection step. The step "size" is controlled by arg. With a zero value, the collector will perform one basic (indivisible) step. For non-zero values, the collector will perform as if that amount of memory (in Kbytes) had been allocated by Lua. Returns true if the step finished a collection cycle.
+"isrunning": Returns a boolean that tells whether the collector is running (i.e., not stopped).
+"incremental": Change the collector mode to incremental. This option can be followed by three numbers: the garbage-collector pause, the step multiplier, and the step size (see §2.5.1). A zero means to not change that value.
+"generational": Change the collector mode to generational. This option can be followed by two numbers: the garbage-collector minor multiplier and the major multiplier (see §2.5.2). A zero means to not change that value.
+See §2.5 for more details about garbage collection and some of these options.  
+
+This function should not be called by a finalizer.  
+
+dofile ([filename])  
+Opens the named file and executes its content as a Lua chunk. When called without arguments, dofile executes the content of the standard input (stdin). Returns all values returned by the chunk. In case of errors, dofile propagates the error to its caller. (That is, dofile does not run in protected mode.)
+error (message [, level])  
+Raises an error (see §2.3) with message as the error object. This function never returns.
+Usually, error adds some information about the error position at the beginning of the message, if the message is a string. The level argument specifies how to get the error position. With level 1 (the default), the error position is where the error function was called. Level 2 points the error to where the function that called error was called; and so on. Passing a level 0 avoids the addition of error position information to the message.
+
+_G  
+A global variable (not a function) that holds the global environment (see §2.2). Lua itself does not use this variable; changing its value does not affect any environment, nor vice versa.
+getmetatable (object)
+If object does not have a metatable, returns nil. Otherwise, if the object's metatable has a __metatable field, returns the associated value. Otherwise, returns the metatable of the given object.
+
+ipairs (t)  
+Returns three values (an iterator function, the table t, and 0) so that the construction
+
+     for i,v in ipairs(t) do body end
+will iterate over the key–value pairs (1,t[1]), (2,t[2]), ..., up to the first absent index.  
+
+load (chunk [, chunkname [, mode [, env]]])  
+Loads a chunk.  
+
+If chunk is a string, the chunk is this string. If chunk is a function, load calls it repeatedly to get the chunk pieces. Each call to chunk must return a string that concatenates with previous results. A return of an empty string, nil, or no value signals the end of the chunk.  
+如果chunk参数是个字符串，那么这个chunk就是这个字符串。如果chunk是个函数
+```lua
+local function get_code()
+  return "print('Hello, Lua!')"
+end
+local func = load(get_code) -- 编译函数返回的字符串为函数
+func() -- 执行函数，输出Hello, Lua!
+```
+比如上面的那个get_code，load函数会反复调用这个get_code去获取这个chunk的分段信息，每次调用这个函数必须返回一个字符串，这个字符串会拼接到之前的字符串，如果返回一个空字符串或者nil或者没有值标表示这个chunk的结尾。 上例代码中get_code会不断返回"print('Hello, Lua!')" ,是个死循环。  下面这个是正确的，get_code相当于chunk加载器，就像下载一样。
+```lua
+local count = -1
+local function get_code()
+    count = count + 1
+   if count == 0 then
+      return "print('Hello"
+   end
+   if count == 1 then
+      return ", Lua!')"
+   end
+   if count == 2 then
+      return
+   end
+end
+local func,err = load(get_code) -- 编译函数返回的字符串为函数
+print(func,err)
+func() -- 执行函数，输出Hello, Lua!
+```
+
+If there are no syntactic errors, load returns the compiled chunk as a function; otherwise, it returns fail plus the error message.  
+如果没有语法错误，那么laod返回一个编译的chunk 其实是一个函数，否者load返回失败并且携带一个错误信息。
+
+When you load a main chunk, the resulting function will always have exactly one upvalue, the _ENV variable (see §2.2). However, when you load a binary chunk created from a function (see string.dump), the resulting function can have an arbitrary number of upvalues, and there is no guarantee that its first upvalue will be the _ENV variable. (A non-main function may not even have an _ENV upvalue.)  
+
+Regardless, if the resulting function has any upvalues, its first upvalue is set to the value of env, if that parameter is given, or to the value of the global environment. Other upvalues are initialized with nil. All upvalues are fresh, that is, they are not shared with any other function.  
+
+chunkname is used as the name of the chunk for error messages and debug information (see §4.7). When absent, it defaults to chunk, if chunk is a string, or to "=(load)" otherwise.  
+
+The string mode controls whether the chunk can be text or binary (that is, a precompiled chunk). It may be the string "b" (only binary chunks), "t" (only text chunks), or "bt" (both binary and text). The default is "bt".  
+
+It is safe to load malformed binary chunks; load signals an appropriate error. However, Lua does not check the consistency of the code inside binary chunks; running maliciously crafted bytecode can crash the interpreter.  
+
+loadfile ([filename [, mode [, env]]])  
+Similar to load, but gets the chunk from file filename or from the standard input, if no file name is given.  
+
