@@ -388,7 +388,7 @@ If there are no syntactic errors, load returns the compiled chunk as a function;
 如果没有语法错误，那么laod返回一个编译的chunk 其实是一个函数，否者load返回失败并且携带一个错误信息。
 
 When you load a main chunk, the resulting function will always have exactly one upvalue, the _ENV variable (see §2.2). However, when you load a binary chunk created from a function (see string.dump), the resulting function can have an arbitrary number of upvalues, and there is no guarantee that its first upvalue will be the _ENV variable. (A non-main function may not even have an _ENV upvalue.)  
-
+如果加载的是一个main chunk，那么输出的函数肯定只有一个上值，就是这个_ENV变量，但是如果我们在一个函数中加载了一个二进制chunk，那么输出的函数可以有任意数量的上值，而且不能保证第一个上值是_ENV变量。（一个非main 函数，甚至可以没有_ENV上值）  
 Regardless, if the resulting function has any upvalues, its first upvalue is set to the value of env, if that parameter is given, or to the value of the global environment. Other upvalues are initialized with nil. All upvalues are fresh, that is, they are not shared with any other function.  
 
 chunkname is used as the name of the chunk for error messages and debug information (see §4.7). When absent, it defaults to chunk, if chunk is a string, or to "=(load)" otherwise.  
@@ -399,4 +399,11 @@ It is safe to load malformed binary chunks; load signals an appropriate error. H
 
 loadfile ([filename [, mode [, env]]])  
 Similar to load, but gets the chunk from file filename or from the standard input, if no file name is given.  
+
+# 6.4 – String Manipulation
+
+string.dump (function [, strip])  代码的二进制输出函数，很重要  
+Returns a string containing a binary representation (a binary chunk) of the given function, so that a later load on this string returns a copy of the function (but with new upvalues). If strip is a true value, the binary representation may not include all debug information about the function, to save space.  
+
+Functions with upvalues have only their number of upvalues saved. When (re)loaded, those upvalues receive fresh instances. (See the load function for details about how these upvalues are initialized. You can use the debug library to serialize and reload the upvalues of a function in a way adequate to your needs.)  
 
