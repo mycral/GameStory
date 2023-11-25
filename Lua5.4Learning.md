@@ -1,3 +1,8 @@
+# Lua 优秀文章
+[小刚带你深入浅出理解Lua语言](https://developer.aliyun.com/article/833148)
+
+
+
 # 2.2 – Environments and the Global Environment
 #  环境和全局环境（表）
 As we will discuss further in §3.2 and §3.3.3, any reference to a free name (that is, a name not bound to any declaration) var is syntactically translated to _ENV.var. Moreover, every chunk is compiled in the scope of an external local variable named _ENV (see §3.3.2), so _ENV itself is never a free name in a chunk.  
